@@ -74,16 +74,6 @@ namespace UnlitWF
             },
         };
 
-        /// <summary>
-        /// 見つけ次第削除するシェーダキーワード
-        /// </summary>
-        private static readonly List<string> DELETE_KEYWORD = new List<string>() {
-            "_",
-            "_ALPHATEST_ON",
-            "_ALPHABLEND_ON",
-            "_ALPHAPREMULTIPLY_ON",
-        };
-
         public override void AssignNewShaderToMaterial(Material material, Shader oldShader, Shader newShader) {
             PreChangeShader(material, oldShader, newShader);
 
@@ -101,12 +91,8 @@ namespace UnlitWF
             if (material != null) {
                 // DebugViewの保存に使っているタグはクリア
                 WF_DebugViewEditor.ClearDebugOverrideTag(material);
-                // 不要なシェーダキーワードは削除
-                foreach (var key in DELETE_KEYWORD) {
-                    if (material.IsKeywordEnabled(key)) {
-                        material.DisableKeyword(key);
-                    }
-                }
+                // シェーダキーワードを整理する
+                WFCommonUtility.SetupShaderKeyword(material);
             }
         }
 
@@ -212,17 +198,8 @@ namespace UnlitWF
                 WFCommonUtility.ChangeShader(WF_DebugViewEditor.SHADER_NAME_DEBUGVIEW, WFCommonUtility.AsMaterials(materialEditor.targets));
             }
 
-            // 不要なシェーダキーワードは削除
-            foreach (object t in materialEditor.targets) {
-                Material mm = t as Material;
-                if (mm != null) {
-                    foreach (var key in DELETE_KEYWORD) {
-                        if (mm.IsKeywordEnabled(key)) {
-                            mm.DisableKeyword(key);
-                        }
-                    }
-                }
-            }
+            // シェーダキーワードを整理する
+            WFCommonUtility.SetupShaderKeyword(WFCommonUtility.AsMaterials(materialEditor.targets));
         }
 
         private void OnGuiSub_ShowCurrentShaderName(MaterialEditor materialEditor, Material mat) {

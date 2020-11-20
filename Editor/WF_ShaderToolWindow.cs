@@ -17,11 +17,9 @@
 
 #if UNITY_EDITOR
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
-using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace UnlitWF
@@ -641,16 +639,18 @@ namespace UnlitWF
 
         #region マイグレーション
 
-        public bool ExistsOldNameProperty(params UnityEngine.Object[] objlist) {
-            return 0 < CreateOldNamePropertyList(objlist).Count;
+        public bool ExistsOldNameProperty(params Material[] mats) {
+            return 0 < CreateOldNamePropertyList(mats).Count;
         }
 
         public bool RenameOldNameProperties(MigrationParameter param) {
             return RenameOldNameProperties(param.materials);
         }
 
-        public bool RenameOldNameProperties(UnityEngine.Object[] objlist) {
-            var oldPropList = CreateOldNamePropertyList(objlist);
+        public bool RenameOldNameProperties(Material[] mats) {
+            Undo.RecordObjects(mats, "WF Migration materials");
+
+            var oldPropList = CreateOldNamePropertyList(mats);
             // 名称を全て変更
             foreach (var propPair in oldPropList) {
                 if (propPair.Value != null) {
@@ -665,13 +665,16 @@ namespace UnlitWF
             }
             // 保存
             ShaderSerializedProperty.AllApplyPropertyChange(oldPropList.Keys);
+            // シェーダキーワードを整理
+            WFCommonUtility.SetupShaderKeyword(mats);
+
             return 0 < oldPropList.Count;
         }
 
-        private Dictionary<ShaderSerializedProperty, ShaderSerializedProperty> CreateOldNamePropertyList(UnityEngine.Object[] objlist) { // ShaderCustomEditor側から呼び出されるのでobject[]
+        private Dictionary<ShaderSerializedProperty, ShaderSerializedProperty> CreateOldNamePropertyList(Material[] mats) {
             var result = new Dictionary<ShaderSerializedProperty, ShaderSerializedProperty>();
 
-            foreach (var mat in WFCommonUtility.AsMaterials(objlist)) {
+            foreach (var mat in mats) {
                 if (mat.shader.name.Contains("MatcapShadows")) {
                     // MatcapShadowsは古いので対象にしない
                     continue;
@@ -729,6 +732,8 @@ namespace UnlitWF
                 return;
             }
 
+            Undo.RecordObjects(param.materialDestination, "WF copy materials");
+
             for (int i = 0; i < param.materialDestination.Length; i++) {
                 var dst = param.materialDestination[i];
                 if (dst == null) {
@@ -738,6 +743,9 @@ namespace UnlitWF
 
                 // コピー
                 if (CopyProperties(src_props, dst_props)) {
+                    // キーワードを整理する
+                    WFCommonUtility.SetupShaderKeyword(dst);
+                    // ダーティフラグを付ける
                     EditorUtility.SetDirty(dst);
                 }
             }
@@ -760,6 +768,8 @@ namespace UnlitWF
         #region リセット・クリーンナップ
 
         public void CleanUpProperties(CleanUpParameter param) {
+            Undo.RecordObjects(param.materials, "WF cleanup materials");
+
             foreach (Material material in param.materials) {
                 if (material == null) {
                     continue;
@@ -779,7 +789,7 @@ namespace UnlitWF
                 var del_props = new HashSet<ShaderSerializedProperty>();
 
                 // プレフィックスに合致する設定値を消去
-                Predicate<ShaderSerializedProperty> predPrefix = p => {
+                System.Predicate<ShaderSerializedProperty> predPrefix = p => {
                     string label = WFCommonUtility.GetPrefixFromPropName(p.name);
                     return label != null && delPrefix.Contains(label);
                 };
@@ -787,7 +797,7 @@ namespace UnlitWF
                     // ただしEnableToggle自体は初期化しない
                     .Where(p => !WFCommonUtility.IsEnableToggleFromPropName(p.name)).ToList().ForEach(p => del_props.Add(p));
                 // 未使用の値を削除
-                Predicate<ShaderSerializedProperty> predUnused = p => param.resetUnused && !p.HasPropertyInShader;
+                System.Predicate<ShaderSerializedProperty> predUnused = p => param.resetUnused && !p.HasPropertyInShader;
                 props.FindAll(predUnused).ForEach(p => del_props.Add(p));
                 // 削除実行
                 DeleteProperties(del_props);
@@ -799,11 +809,16 @@ namespace UnlitWF
                     }
                 }
 
+                // キーワードを整理する
+                WFCommonUtility.SetupShaderKeyword(material);
+                // 反映
                 EditorUtility.SetDirty(material);
             }
         }
 
         public void ResetProperties(ResetParameter param) {
+            Undo.RecordObjects(param.materials, "WF reset materials");
+
             foreach (Material material in param.materials) {
                 if (material == null) {
                     continue;
@@ -850,6 +865,8 @@ namespace UnlitWF
                     }
                 }
 
+                // キーワードを整理する
+                WFCommonUtility.SetupShaderKeyword(material);
                 // 反映
                 EditorUtility.SetDirty(material);
             }

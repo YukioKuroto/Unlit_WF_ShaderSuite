@@ -105,16 +105,57 @@ namespace UnlitWF
             return label;
         }
 
+        /// <summary>
+        /// プロパティ物理名から Enable トグルかどうかを判定する。
+        /// </summary>
+        /// <param name="prop_name"></param>
+        /// <returns></returns>
         public static bool IsEnableToggleFromPropName(string prop_name) {
             string label, name;
             WFCommonUtility.FormatPropName(prop_name, out label, out name);
             return IsEnableToggle(label, name);
         }
 
+        /// <summary>
+        /// ラベル＋プロパティ名から Enable トグルかどうかを判定する。
+        /// </summary>
+        /// <param name="label"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public static bool IsEnableToggle(string label, string name) {
             return label != null && name.ToLower() == "enable";
         }
 
+        /// <summary>
+        /// 見つけ次第削除するシェーダキーワード
+        /// </summary>
+        private static readonly List<string> DELETE_KEYWORD = new List<string>() {
+            "_",
+            "_ALPHATEST_ON",
+            "_ALPHABLEND_ON",
+            "_ALPHAPREMULTIPLY_ON",
+        };
+
+        /// <summary>
+        /// 各マテリアルのEnableキーワードを設定する
+        /// </summary>
+        /// <param name="mats"></param>
+        public static void SetupShaderKeyword(params Material[] mats) {
+            // 不要なシェーダキーワードは削除
+            foreach (var mat in mats) {
+                foreach (var key in DELETE_KEYWORD) {
+                    if (mat.IsKeywordEnabled(key)) {
+                        mat.DisableKeyword(key);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// マテリアルの shader を指定の名前のものに変更する。
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="mats"></param>
         public static void ChangeShader(string name, params Material[] mats) {
             if (string.IsNullOrWhiteSpace(name) || mats.Length == 0) {
                 return; // なにもしない
@@ -151,6 +192,11 @@ namespace UnlitWF
             }
         }
 
+        /// <summary>
+        /// UnityEngine.Object の配列から Material の配列を作成する。
+        /// </summary>
+        /// <param name="array"></param>
+        /// <returns></returns>
         public static Material[] AsMaterials(params UnityEngine.Object[] array) {
             return array == null ? new Material[0] : array.Select(obj => obj as Material).Where(m => m != null).ToArray();
         }
