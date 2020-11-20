@@ -132,6 +132,9 @@ Shader "UnlitWF/WF_Gem_Transparent" {
             #define _WF_FACE_BACK
             #define _WF_MOBILE
 
+            #pragma shader_feature_local _GB_ENABLE
+            #pragma shader_feature_local _GF_ENABLE
+            #pragma shader_feature_local _GR_ENABLE
             #pragma shader_feature_local _NM_ENABLE
             #pragma shader_feature_local _VC_ENABLE
 
@@ -162,6 +165,9 @@ Shader "UnlitWF/WF_Gem_Transparent" {
             #define _WF_ALPHA_FRESNEL
             #define _WF_MOBILE
 
+            #pragma shader_feature_local _GB_ENABLE
+            #pragma shader_feature_local _GF_ENABLE
+            #pragma shader_feature_local _GR_ENABLE
             #pragma shader_feature_local _NM_ENABLE
             #pragma shader_feature_local _VC_ENABLE
 

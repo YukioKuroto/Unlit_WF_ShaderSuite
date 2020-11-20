@@ -30,8 +30,8 @@
     // Gem Flake
     ////////////////////////////
 
-    void affectGemFlake(v2f i, float3 ws_camera_dir, float3 ws_normal, float size, inout float4 color) {
-        if (TGL_ON(_GF_Enable)) {
+    #ifdef _GF_ENABLE
+        void affectGemFlake(v2f i, float3 ws_camera_dir, float3 ws_normal, float size, inout float4 color) {
             float2 matcapVector = calcMatcapVector(ws_camera_dir, ws_normal).xy * size;
             float3 ls_camera_dir = SafeNormalizeVec3(worldSpaceViewPointPos() - calcWorldSpaceBasePos(i.ws_vertex));
 
@@ -47,14 +47,16 @@
             ));
             color.rgb *= checker.x != checker.y ? _GF_FlakeBrighten : _GF_FlakeDarken;
         }
-    }
+    #else
+        #define affectGemFlake(i, ws_camera_dir, ws_normal, size, color)
+    #endif
 
     ////////////////////////////
     // Gem Reflection
     ////////////////////////////
 
-    void affectGemReflection(v2f i, float3 ws_normal, inout float4 color) {
-        if (TGL_ON(_GR_Enable)) {
+    #ifdef _GR_ENABLE
+        void affectGemReflection(v2f i, float3 ws_normal, inout float4 color) {
             // リフレクション
             float3 cubemap = pickReflectionCubemap(_GR_Cubemap, _GR_Cubemap_HDR, i.ws_vertex, ws_normal, 0); // smoothnessは1固定
             float3 reflection = lerp(cubemap, pow(max(ZERO_VEC3, cubemap), NON_ZERO_FLOAT(1 - _GR_CubemapHighCut)), step(ONE_VEC3, cubemap)) * _GR_CubemapPower;
@@ -66,7 +68,9 @@
                 lerp(color.rgb * reflection.rgb, color.rgb + reflection.rgb, _GR_Brightness),
                 _GR_Power);
         }
-    }
+    #else
+        #define affectGemReflection(i, ws_normal, color)
+    #endif
 
     ////////////////////////////
     // fragment shader
