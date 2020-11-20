@@ -29,8 +29,6 @@
     // Light Matcap Power
     ////////////////////////////
 
-    #ifdef _HL_ENABLE
-
         #define WF_POWERCAP_FUNC(id)                                                                                                    \
             void affectMatcapColor_##id(float2 matcapVector, float2 uv_main, inout float4 color) {                                      \
                 if (TGL_ON(_HL_Enable_##id)) {                                                                                          \
@@ -55,20 +53,27 @@
 
         #define WF_POWERCAP_AFFECT(id)  affectMatcapColor_##id(calcMatcapVector(matcapVector, _HL_BlendNormal_##id, _HL_Parallax_##id), i.uv, color)
 
-    #else
-
-        #define WF_POWERCAP_FUNC(id)
-        #define WF_POWERCAP_AFFECT(id)
-
-    #endif
-
+#ifdef _HL_ENABLE_1
     WF_POWERCAP_FUNC(1)
+#endif
+#ifdef _HL_ENABLE_2
     WF_POWERCAP_FUNC(2)
+#endif
+#ifdef _HL_ENABLE_3
     WF_POWERCAP_FUNC(3)
+#endif
+#ifdef _HL_ENABLE_4
     WF_POWERCAP_FUNC(4)
+#endif
+#ifdef _HL_ENABLE_5
     WF_POWERCAP_FUNC(5)
+#endif
+#ifdef _HL_ENABLE_6
     WF_POWERCAP_FUNC(6)
+#endif
+#ifdef _HL_ENABLE_7
     WF_POWERCAP_FUNC(7)
+#endif
 
     ////////////////////////////
     // vertex&fragment shader
@@ -106,13 +111,27 @@
 
         // Highlight
         affectMatcapColor(calcMatcapVector(matcapVector, _HL_BlendNormal, _HL_Parallax), uv_main, color);
+#ifdef _HL_ENABLE_1
         WF_POWERCAP_AFFECT(1);
+#endif
+#ifdef _HL_ENABLE_2
         WF_POWERCAP_AFFECT(2);
+#endif
+#ifdef _HL_ENABLE_3
         WF_POWERCAP_AFFECT(3);
+#endif
+#ifdef _HL_ENABLE_4
         WF_POWERCAP_AFFECT(4);
+#endif
+#ifdef _HL_ENABLE_5
         WF_POWERCAP_AFFECT(5);
+#endif
+#ifdef _HL_ENABLE_6
         WF_POWERCAP_AFFECT(6);
+#endif
+#ifdef _HL_ENABLE_7
         WF_POWERCAP_AFFECT(7);
+#endif
 
         // 階調影
         affectToonShade(i, uv_main, ws_normal, ws_bump_normal, angle_light_camera, color);
