@@ -149,6 +149,25 @@ namespace UnlitWF
                     }
                 }
             }
+            // Enableキーワードを整理する
+#if UNITY_2019_1_OR_NEWER
+            foreach (var mat in mats) {
+                for (int idx = 0; idx < mat.shader.GetPropertyCount(); idx++) {
+                    var prop_name = mat.shader.GetPropertyName(idx);
+                    if (IsEnableToggleFromPropName(prop_name)) {
+                        var value = 0.001f < Math.Abs(mat.GetFloat(prop_name));
+                        var kwd = prop_name.ToUpper();
+                        if (mat.IsKeywordEnabled(kwd) != value) {
+                            if (value) {
+                                mat.EnableKeyword(kwd);
+                            } else {
+                                mat.DisableKeyword(kwd);
+                            }
+                        }
+                    }
+                }
+            }
+#endif
         }
 
         /// <summary>
