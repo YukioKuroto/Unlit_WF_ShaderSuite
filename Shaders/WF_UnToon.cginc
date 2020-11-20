@@ -216,7 +216,6 @@
         UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(v[0]);
 
         #ifdef _TL_ENABLE
-        if (TGL_ON(_TL_Enable)) {
             float width0 = getOutlineShiftWidth(TRANSFORM_TEX(v[0].uv, _MainTex));
             float width1 = getOutlineShiftWidth(TRANSFORM_TEX(v[1].uv, _MainTex));
             float width2 = getOutlineShiftWidth(TRANSFORM_TEX(v[2].uv, _MainTex));
@@ -251,7 +250,6 @@
                 triStream.Append(p2);
                 triStream.Append(n2);
             }
-        }
         #endif
     }
 #endif
@@ -289,11 +287,7 @@
 
     float4 shiftEmissiveScrollVertex(inout v2f o) {
         #ifdef _ES_ENABLE
-        if (TGL_ON(_ES_Enable)) {
             return shiftDepthVertex(o.ws_vertex, _ES_Z_Shift);
-        } else {
-            return UnityObjectToClipPos( ZERO_VEC3 );
-        }
         #else
             return UnityObjectToClipPos( ZERO_VEC3 );
         #endif
@@ -312,8 +306,6 @@
         float4 color = float4(0, 0, 0, 0);
 
         #ifdef _ES_ENABLE
-        if (TGL_ON(_ES_Enable)) {
-
             // メイン
             float2 uv_main = TRANSFORM_TEX(i.uv, _MainTex);
             color = PICK_MAIN_TEX2D(_MainTex, uv_main) * _Color / 256;  // _EmissionMapを参照するために_MainTexに手を付けておく
@@ -323,11 +315,6 @@
 
             // Alpha は 0-1 にクランプ
             color.a = saturate(color.a);
-
-        } else {
-            // 無効のときはクリッピングする
-            discard;
-        }
         #else
             // 無効のときはクリッピングする
             discard;
