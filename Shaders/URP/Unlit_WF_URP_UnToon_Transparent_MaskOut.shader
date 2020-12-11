@@ -302,16 +302,16 @@ Shader "UnlitWF_URP/WF_UnToon_Transparent_MaskOut" {
             #define _WF_ALPHA_BLEND
             #define _WF_PLATFORM_LWRP
 
-            #define _AO_ENABLE
-            #define _CH_ENABLE
-            #define _CL_ENABLE
-            #define _ES_ENABLE
-            #define _LM_ENABLE
-            #define _MT_ENABLE
-            #define _NM_ENABLE
-            #define _TR_ENABLE
-            #define _TS_ENABLE
-            #define _VC_ENABLE
+            #pragma shader_feature_local _AO_ENABLE
+            #pragma shader_feature_local _CH_ENABLE
+            #pragma shader_feature_local _CL_ENABLE
+            #pragma shader_feature_local _ES_ENABLE
+            #pragma shader_feature_local _LM_ENABLE
+            #pragma shader_feature_local _MT_ENABLE
+            #pragma shader_feature_local _NM_ENABLE
+            #pragma shader_feature_local _TR_ENABLE
+            #pragma shader_feature_local _TS_ENABLE
+            #pragma shader_feature_local _VC_ENABLE
 
             // -------------------------------------
             // Lightweight Pipeline keywords
@@ -361,7 +361,7 @@ Shader "UnlitWF_URP/WF_UnToon_Transparent_MaskOut" {
             #define _WF_ALPHA_BLEND
             #define _WF_PLATFORM_LWRP
 
-            #define _VC_ENABLE
+            #pragma shader_feature_local _VC_ENABLE
 
             #pragma multi_compile_instancing
 

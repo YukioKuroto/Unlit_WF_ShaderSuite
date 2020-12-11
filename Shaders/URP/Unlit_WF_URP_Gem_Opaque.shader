@@ -108,8 +108,8 @@ Shader "UnlitWF_URP/WF_Gem_Opaque" {
             #define _WF_MOBILE
             #define _WF_PLATFORM_LWRP
 
-            #define _NM_ENABLE
-            #define _VC_ENABLE
+            #pragma shader_feature_local _NM_ENABLE
+            #pragma shader_feature_local _VC_ENABLE
 
             // -------------------------------------
             // Lightweight Pipeline keywords
@@ -153,7 +153,7 @@ Shader "UnlitWF_URP/WF_Gem_Opaque" {
             #define _WF_MOBILE
             #define _WF_PLATFORM_LWRP
 
-            #define _VC_ENABLE
+            #pragma shader_feature_local _VC_ENABLE
 
             #pragma multi_compile_instancing
 

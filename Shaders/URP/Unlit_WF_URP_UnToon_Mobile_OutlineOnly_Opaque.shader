@@ -95,8 +95,8 @@ Shader "UnlitWF_URP/UnToon_Mobile/WF_UnToon_Mobile_OutlineOnly_Opaque" {
             #define _WF_MOBILE
             #define _WF_PLATFORM_LWRP
 
-            #define _TL_ENABLE
-            #define _VC_ENABLE
+            #pragma shader_feature_local _TL_ENABLE
+            #pragma shader_feature_local _VC_ENABLE
 
             // -------------------------------------
             // Lightweight Pipeline keywords
@@ -140,8 +140,8 @@ Shader "UnlitWF_URP/UnToon_Mobile/WF_UnToon_Mobile_OutlineOnly_Opaque" {
             #define _WF_MOBILE
             #define _WF_PLATFORM_LWRP
 
-            #define _TL_ENABLE
-            #define _VC_ENABLE
+            #pragma shader_feature_local _TL_ENABLE
+            #pragma shader_feature_local _VC_ENABLE
 
             #pragma multi_compile_fog
             #pragma multi_compile_instancing
