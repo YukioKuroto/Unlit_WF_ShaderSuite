@@ -562,7 +562,6 @@
         }
 
         void affectLame(v2f i, float2 uv_main, float3 ws_normal, inout float4 color) {
-            if (TGL_ON(_LM_Enable)) {
                 float power = WF_TEX2D_LAME_MASK(uv_main);
                 if (0 < power) {
                     float   scale = NON_ZERO_FLOAT(_LM_Scale) / 100;
@@ -607,7 +606,6 @@
                         color.a = max(color.a, lerp(color.a, lame_color.a, saturate(power * _LM_ChangeAlpha)));
                     #endif
                 }
-            }
         }
     #else
         #define affectLame(i, uv_main, ws_normal, color)
